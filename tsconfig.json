@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node-lts",
+  "compilerOptions": {
+    "importHelpers": true,
+    "declaration": true,
+    "declarationDir": "dist/esm",
+    "outDir": "dist/esm"
+  },
+  "include": [
+    "src"
+  ]
+}
