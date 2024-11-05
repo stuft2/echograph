@@ -1,2 +1,2 @@
-export * from './EchoGraph.js'
+export * from './Graph.js'
 export * from './EventEmitter.js'

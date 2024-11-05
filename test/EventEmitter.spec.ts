@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { EventEmitter } from '../src/EventEmitter.js'
+import { emit, EventEmitter } from '../src/EventEmitter.js'
 
 test('add, resolve, and remove async listeners', async (t) => {
 	const emitter = new EventEmitter('example')
@@ -21,4 +21,36 @@ test('add, resolve, and remove async listeners', async (t) => {
 	// Remove the subscription
 	emitter.off(event, fn)
 	assert.equal(emitter.subscriptions.get(event)?.size, 0)
+})
+
+test('decorate instance methods to emit a given event', async (t) => {
+	class Component extends EventEmitter {
+		constructor() {
+			super('component')
+		}
+
+		@emit('refresh')
+		async refresh () {
+			return true
+		}
+	}
+
+	const component = new Component()
+	const listener = t.mock.fn()
+	component.on('refresh', listener)
+
+	assert.equal(
+		component.subscriptions.get('refresh')?.size,
+		1,
+		'The refresh method listener was not subscribed',
+	)
+
+	const refreshed = await component.refresh()
+
+	assert.ok(refreshed, 'Did not invoke the refresh method')
+	assert.equal(
+		listener.mock.callCount(),
+		1,
+		'Did not invoke the refresh method listener',
+	)
 })

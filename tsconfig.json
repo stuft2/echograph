@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node-lts",
   "compilerOptions": {
     "importHelpers": true,
+    "experimentalDecorators": true,
     "declaration": true,
     "declarationDir": "dist/esm",
     "outDir": "dist/esm"

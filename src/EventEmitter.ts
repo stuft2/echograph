@@ -1,4 +1,9 @@
 /**
+ * The async event listener signature
+ */
+export type Listener = (...args: any[]) => Promise<unknown> | unknown
+
+/**
  * An event emitter with async listeners. Uses sets instead of arrays to keep track of listeners.
  */
 export class EventEmitter {
@@ -15,7 +20,7 @@ export class EventEmitter {
 	}
 
 	listeners(event: string) {
-		return this.subscriptions.get(event)?.values()
+		return this.subscriptions.get(event)
 	}
 
 	on(event: string, listener: Listener): this {
@@ -33,6 +38,29 @@ export class EventEmitter {
 }
 
 /**
- * The async event listener signature
+ * A decorator that emits the event along with the result of the decorated method. The event is emitted after the method resolves.
+ * The decorated method is async will be mutated to return a Promise.
+ * @param event - The event to emit at the end of the method invocation.
  */
-export type Listener = (...args: any[]) => Promise<void> | void
+export function emit(event: string) {
+	return function <
+		This extends EventEmitter,
+		Args extends unknown[],
+		Return extends Promise<unknown>,
+	>(
+		target: (this: This, ...args: Args) => Return,
+		_context: ClassMethodDecoratorContext<
+			This,
+			(this: This, ...args: Args) => Return
+		>,
+	) {
+		return async function (
+			this: This,
+			...args: Args
+		): Promise<Awaited<Return>> {
+			const result = await target.call(this, ...args)
+			await this.emit(event, result)
+			return result
+		}
+	}
+}
