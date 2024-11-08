@@ -32,8 +32,8 @@
     "clean": "rimraf dist",
     "lint": "npx @biomejs/biome format ./src ./test",
     "lint:fix": "npx @biomejs/biome format --write ./src ./test",
-    "test": "tsx --test test/*.spec.ts",
-    "test:coverage": "tsx --test --experimental-test-coverage test/*.spec.ts"
+    "test": "tsx --test test/*.test.ts",
+    "test:coverage": "tsx --test --experimental-test-coverage test/*.test.ts"
   },
   "keywords": [],
   "contributors": [

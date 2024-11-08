@@ -27,6 +27,42 @@ type AnyVisitState = ValueOf<typeof VisitState>
  */
 export class Graph<T = string> extends Map<T, Set<T>> {
 	/**
+	 * Associates parent and children nodes, creating the parent node if necessary
+	 * @param parent - The parent node
+	 * @param children - The edges to create
+	 */
+	link(parent: T, ...children: T[]) {
+		const node = this.get(parent)
+		if (!node) {
+			this.set(parent, new Set<T>(children))
+		} else {
+			for (const child of children) {
+				node.add(child)
+			}
+		}
+		return this
+	}
+
+	/**
+	 * Disassociates the parent and children nodes
+	 * @param parent - The parent node
+	 * @param children - The edges to create
+	 */
+	unlink(parent: T, ...children: T[]): this {
+		const node = this.get(parent)
+		if (node != null) {
+			if (children.length !== 0) {
+				for (const child of children) {
+					node.delete(child)
+				}
+			} else {
+				node.clear()
+			}
+		}
+		return this
+	}
+
+	/**
 	 * Sort using Depth First Search algorithm
 	 * @param throwOnCycle=false - optionally throw an error if a circular dependency is found
 	 */

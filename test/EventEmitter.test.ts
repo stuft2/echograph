@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { emit, EventEmitter } from '../src/EventEmitter.js'
 
-test('add, resolve, and remove async listeners', async (t) => {
+void test('add, resolve, and remove async listeners', async (t) => {
 	const emitter = new EventEmitter('example')
 	const event = 'test'
 	const fn = t.mock.fn()
@@ -23,14 +23,14 @@ test('add, resolve, and remove async listeners', async (t) => {
 	assert.equal(emitter.subscriptions.get(event)?.size, 0)
 })
 
-test('decorate instance methods to emit a given event', async (t) => {
+void test('decorate instance methods to emit a given event', async (t) => {
 	class Component extends EventEmitter {
 		constructor() {
 			super('component')
 		}
 
 		@emit('refresh')
-		async refresh () {
+		async refresh() {
 			return true
 		}
 	}

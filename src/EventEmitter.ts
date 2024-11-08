@@ -42,24 +42,25 @@ export class EventEmitter {
  * The decorated method is async will be mutated to return a Promise.
  * @param event - The event to emit at the end of the method invocation.
  */
-export function emit(event: string) {
+export function emit(event?: string) {
 	return function <
 		This extends EventEmitter,
 		Args extends unknown[],
 		Return extends Promise<unknown>,
 	>(
 		target: (this: This, ...args: Args) => Return,
-		_context: ClassMethodDecoratorContext<
+		context: ClassMethodDecoratorContext<
 			This,
 			(this: This, ...args: Args) => Return
 		>,
 	) {
+		const eventName = event ?? (context.name as string)
 		return async function (
 			this: This,
 			...args: Args
 		): Promise<Awaited<Return>> {
 			const result = await target.call(this, ...args)
-			await this.emit(event, result)
+			await this.emit(eventName, result)
 			return result
 		}
 	}
